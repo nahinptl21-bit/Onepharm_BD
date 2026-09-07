@@ -141,9 +141,18 @@ export function AiEngineModal({ isOpen, onClose }: AiEngineModalProps) {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Configured</span>
+                <div className="flex items-center gap-1 text-[11px] font-medium">
+                  {status?.providers?.gemini?.configured ? (
+                    <span className="flex items-center gap-1 text-emerald-700">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Configured</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-amber-700">
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                      <span>Missing GEMINI_API_KEY in Vercel</span>
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="text-[10px] text-stone-500 bg-white/80 p-2 rounded-lg border border-stone-200/60 flex flex-wrap gap-1.5">
@@ -173,9 +182,15 @@ export function AiEngineModal({ isOpen, onClose }: AiEngineModalProps) {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Connected</span>
+                <div className="flex items-center gap-1 text-[11px] font-medium">
+                  {status?.providers?.cerebras?.configured ? (
+                    <span className="flex items-center gap-1 text-emerald-700">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Connected</span>
+                    </span>
+                  ) : (
+                    <span className="text-stone-400 text-[10px]">Optional Failover (Not set)</span>
+                  )}
                 </div>
               </div>
               <div className="text-[10px] text-stone-500 bg-white/80 p-2 rounded-lg border border-stone-200/60 flex flex-wrap gap-1.5">
@@ -205,9 +220,15 @@ export function AiEngineModal({ isOpen, onClose }: AiEngineModalProps) {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Connected</span>
+                <div className="flex items-center gap-1 text-[11px] font-medium">
+                  {status?.providers?.deepseek?.configured ? (
+                    <span className="flex items-center gap-1 text-emerald-700">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Connected</span>
+                    </span>
+                  ) : (
+                    <span className="text-stone-400 text-[10px]">Optional Failover (Not set)</span>
+                  )}
                 </div>
               </div>
               <div className="text-[10px] text-stone-500 bg-white/80 p-2 rounded-lg border border-stone-200/60 flex flex-wrap gap-1.5">
@@ -239,6 +260,24 @@ export function AiEngineModal({ isOpen, onClose }: AiEngineModalProps) {
                   <span>Always Ready</span>
                 </div>
               </div>
+            </div>
+
+            {/* Vercel Environment Configuration Callout */}
+            <div className="p-3.5 rounded-xl border border-sky-200 bg-sky-50/70 text-sky-950 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-sky-900">
+                <Server className="w-4 h-4 text-sky-700" />
+                <span>Deploying to Vercel? Quick AI Setup</span>
+              </div>
+              <p className="text-[11px] text-sky-800 leading-relaxed">
+                When you deploy to Vercel, the <code className="bg-sky-200/60 px-1 py-0.5 rounded font-mono text-[10px]">.env</code> file is not included by default for security. To enable real-time AI on Vercel:
+              </p>
+              <ol className="text-[11px] text-sky-900 list-decimal list-inside space-y-1 pl-1">
+                <li>Go to your project in the <strong className="font-semibold">Vercel Dashboard</strong>.</li>
+                <li>Navigate to <strong className="font-semibold">Settings &rarr; Environment Variables</strong>.</li>
+                <li>Add Key: <code className="bg-sky-200/80 px-1 py-0.5 rounded font-mono text-[10px] font-bold">GEMINI_API_KEY</code> with your Gemini API key value.</li>
+                <li>(Optional) Add <code className="bg-sky-200/80 px-1 py-0.5 rounded font-mono text-[10px]">CEREBRAS_API_KEY</code> or <code className="bg-sky-200/80 px-1 py-0.5 rounded font-mono text-[10px]">DEEPSEEK_API_KEY</code> for automatic failover.</li>
+                <li>Click <strong className="font-semibold">Redeploy</strong> to apply the keys.</li>
+              </ol>
             </div>
           </div>
         </div>

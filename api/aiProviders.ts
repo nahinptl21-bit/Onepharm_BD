@@ -20,31 +20,41 @@ export interface ProviderStatus {
   order: AiProvider[];
 }
 
-// Keys configuration loaded safely from environment variables (never hardcode in tracked git files)
-const GEMINI_KEYS = Array.from(
-  new Set([process.env.GEMINI_API_KEY].filter(Boolean) as string[])
-);
+// Helper functions to get keys dynamically from process.env at request time (crucial for Vercel serverless cold starts & warm instances)
+function getGeminiKeys(): string[] {
+  return Array.from(
+    new Set([process.env.GEMINI_API_KEY, process.env.VITE_GEMINI_API_KEY].filter(Boolean) as string[])
+  );
+}
 
-const CEREBRAS_KEYS = Array.from(
-  new Set([process.env.CEREBRAS_API_KEY].filter(Boolean) as string[])
-);
+function getCerebrasKeys(): string[] {
+  return Array.from(
+    new Set([process.env.CEREBRAS_API_KEY, process.env.VITE_CEREBRAS_API_KEY].filter(Boolean) as string[])
+  );
+}
 
-const DEEPSEEK_KEYS = Array.from(
-  new Set([process.env.DEEPSEEK_API_KEY].filter(Boolean) as string[])
-);
+function getDeepSeekKeys(): string[] {
+  return Array.from(
+    new Set([process.env.DEEPSEEK_API_KEY, process.env.VITE_DEEPSEEK_API_KEY].filter(Boolean) as string[])
+  );
+}
 
 export function getProviderStatus(): ProviderStatus {
+  const geminiKeys = getGeminiKeys();
+  const cerebrasKeys = getCerebrasKeys();
+  const deepseekKeys = getDeepSeekKeys();
+
   return {
     gemini: {
-      configured: GEMINI_KEYS.length > 0,
+      configured: geminiKeys.length > 0,
       models: ["gemini-3.1-flash-lite", "gemini-3.8-flash", "gemini-flash-latest"],
     },
     cerebras: {
-      configured: CEREBRAS_KEYS.length > 0,
+      configured: cerebrasKeys.length > 0,
       models: ["gpt-oss-120b", "qwen-3.8-27b", "gemma-4-31b"],
     },
     deepseek: {
-      configured: DEEPSEEK_KEYS.length > 0,
+      configured: deepseekKeys.length > 0,
       models: ["deepseek-chat"],
     },
     autoFailoverEnabled: true,
@@ -106,8 +116,9 @@ export async function executeAutoFailover<T>(options: {
     "gemini-3.8-flash",
     "gemini-flash-latest",
   ];
+  const geminiKeys = getGeminiKeys();
 
-  for (const apiKey of GEMINI_KEYS) {
+  for (const apiKey of geminiKeys) {
     const ai = new GoogleGenAI({
       apiKey,
       httpOptions: {
@@ -152,7 +163,9 @@ export async function executeAutoFailover<T>(options: {
   // 2. SECONDARY: Cerebras Ultra-Fast Inference
   // ==========================================
   const cerebrasModels = ["gpt-oss-120b", "qwen-3.8-27b", "gemma-4-31b"];
-  for (const apiKey of CEREBRAS_KEYS) {
+  const cerebrasKeys = getCerebrasKeys();
+
+  for (const apiKey of cerebrasKeys) {
     for (const modelName of cerebrasModels) {
       try {
         const controller = new AbortController();
@@ -212,7 +225,9 @@ export async function executeAutoFailover<T>(options: {
   // ==========================================
   // 3. TERTIARY: DeepSeek API (deepseek-chat)
   // ==========================================
-  for (const apiKey of DEEPSEEK_KEYS) {
+  const deepseekKeys = getDeepSeekKeys();
+
+  for (const apiKey of deepseekKeys) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 12000);
@@ -302,7 +317,8 @@ export async function identifyFontWithAutoFailover(options: {
   ];
 
   // Try each Gemini key and vision model
-  for (const apiKey of GEMINI_KEYS) {
+  const geminiKeys = getGeminiKeys();
+  for (const apiKey of geminiKeys) {
     const ai = new GoogleGenAI({
       apiKey,
       httpOptions: { headers: { "User-Agent": "aistudio-build-vision" } },
