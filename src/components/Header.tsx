@@ -11,9 +11,11 @@ import {
   Check,
   Layers,
   ArrowRight,
+  Info,
 } from 'lucide-react';
 import { SAMPLE_PRESETS, SamplePreset } from '../data/samplePresets';
 import { ActiveAppTab } from '../types';
+import { AboutModal } from './AboutModal';
 
 interface HeaderProps {
   activeTab: ActiveAppTab;
@@ -30,6 +32,7 @@ export function Header({
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [samplesDropdownOpen, setSamplesDropdownOpen] = useState(false);
+  const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const samplesDropdownRef = useRef<HTMLDivElement>(null);
 
   // Close desktop dropdown on outside click
@@ -242,6 +245,18 @@ export function Header({
                   <span>ONE • MedBox • Pulse</span>
                 </div>
               )}
+
+              {/* Desktop About Button */}
+              <button
+                type="button"
+                id="about-app-btn"
+                onClick={() => setAboutModalOpen(true)}
+                className="p-1.5 sm:px-2.5 sm:py-1.5 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                title="About this application"
+              >
+                <Info className="w-3.5 h-3.5 text-stone-500" />
+                <span className="hidden sm:inline">About</span>
+              </button>
             </div>
 
             {/* Mobile Header Right Controls: Fast Sample & Hamburger Menu Button */}
@@ -463,7 +478,20 @@ export function Header({
 
             {/* Bottom Footer Info inside Mobile Menu */}
             <div className="pt-4 border-t border-stone-100 text-xs text-stone-500 space-y-2">
-              <div className="flex items-center justify-between text-[11px]">
+              <button
+                type="button"
+                id="mobile-about-btn"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setAboutModalOpen(true);
+                }}
+                className="w-full py-2 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Info className="w-3.5 h-3.5 text-stone-600" />
+                <span>About This Application</span>
+              </button>
+
+              <div className="flex items-center justify-between text-[11px] pt-1">
                 <span>Ecosystem Entities:</span>
                 <span className="font-semibold text-stone-700">
                   ONE Pharmacy • MedBox • PulseTech
@@ -480,6 +508,12 @@ export function Header({
           </div>
         </div>
       )}
+
+      {/* About Modal Dialog */}
+      <AboutModal
+        isOpen={aboutModalOpen}
+        onClose={() => setAboutModalOpen(false)}
+      />
     </>
   );
 }
