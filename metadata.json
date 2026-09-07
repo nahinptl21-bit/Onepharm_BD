@@ -1,0 +1,6 @@
+{
+  "name": "Content Match Checker",
+  "description": "Check content matching, identify fonts from screenshots, and analyze social media campaign JSON with AI-powered banner, poster content, and creative event generator for ONE Pharmacy, MedBox, and PulseTech.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
