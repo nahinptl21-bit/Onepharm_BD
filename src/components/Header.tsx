@@ -16,6 +16,8 @@ import {
 import { SAMPLE_PRESETS, SamplePreset } from '../data/samplePresets';
 import { ActiveAppTab } from '../types';
 import { AboutModal } from './AboutModal';
+import { AiEngineModal } from './AiEngineModal';
+import { Zap } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: ActiveAppTab;
@@ -33,6 +35,7 @@ export function Header({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [samplesDropdownOpen, setSamplesDropdownOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
   const samplesDropdownRef = useRef<HTMLDivElement>(null);
 
   // Close desktop dropdown on outside click
@@ -245,6 +248,23 @@ export function Header({
                   <span>ONE • MedBox • Pulse</span>
                 </div>
               )}
+
+              {/* AI Engine Multi-Model Failover Status Button */}
+              <button
+                type="button"
+                id="ai-engine-pool-btn"
+                onClick={() => setAiModalOpen(true)}
+                className="px-2.5 py-1.5 bg-emerald-50/90 hover:bg-emerald-100 border border-emerald-200/90 text-emerald-800 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                title="Multi-Model Failover: Gemini, Cerebras, DeepSeek"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="hidden xl:inline font-medium text-emerald-700">AI Pool:</span>
+                <span className="font-bold">Auto-Failover</span>
+              </button>
 
               {/* Desktop About Button */}
               <button
@@ -480,6 +500,19 @@ export function Header({
             <div className="pt-4 border-t border-stone-100 text-xs text-stone-500 space-y-2">
               <button
                 type="button"
+                id="mobile-ai-engine-btn"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setAiModalOpen(true);
+                }}
+                className="w-full py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Multi-Model AI Failover Status</span>
+              </button>
+
+              <button
+                type="button"
                 id="mobile-about-btn"
                 onClick={() => {
                   setMobileMenuOpen(false);
@@ -513,6 +546,12 @@ export function Header({
       <AboutModal
         isOpen={aboutModalOpen}
         onClose={() => setAboutModalOpen(false)}
+      />
+
+      {/* Multi-Model AI Failover Engine Modal */}
+      <AiEngineModal
+        isOpen={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
       />
     </>
   );
